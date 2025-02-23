@@ -5,17 +5,19 @@ import psutil
 #parsbot 
 bot = telebot.TeleBot('7939669010:AAEG8-KmNSVoisckbRFYM36Kq2-HkXJZWrU')
 
+service: str = "rsyslogd"
+
 
 @staticmethod
 def status() -> bool:
     for proc in psutil.process_iter(['pid', 'name', 'username']):
-        if proc.info['name'] == "rsyslogd":
+        if proc.info['name'] == service:
             return proc.is_running()
 
-
+@staticmethod
 def info() -> str:
     for proc in psutil.process_iter(['pid', 'name', 'username']):
-        if proc.info['name'] == "rsyslogd":
+        if proc.info['name'] == service:
             return str(proc)
 
 
