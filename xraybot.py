@@ -1,9 +1,9 @@
 import telebot
 import psutil
+import sys
 
 
-#parsbot 
-bot = telebot.TeleBot('7939669010:AAEG8-KmNSVoisckbRFYM36Kq2-HkXJZWrU')
+bot = telebot.TeleBot(sys.argv[1])
 
 service: str = "rsyslogd"
 
@@ -14,11 +14,28 @@ def status() -> bool:
         if proc.info['name'] == service:
             return proc.is_running()
 
+
 @staticmethod
 def info() -> str:
     for proc in psutil.process_iter(['pid', 'name', 'username']):
         if proc.info['name'] == service:
             return str(proc)
+
+
+@staticmethod
+def restart_xray() -> str:
+    import os, time
+    os.system('systemctl restart xray')
+    time.sleep(2)
+    if status() == True:
+        return "Рестарт успешен"
+    else:
+        return "Ошибка"
+
+
+@bot.message_handler(commands=["restart"])
+def restart(message):
+    bot.send_message(message.chat.id, restart_xray())
 
 
 @bot.message_handler(commands=["status"])
